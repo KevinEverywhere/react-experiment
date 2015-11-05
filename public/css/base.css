@@ -53,9 +53,11 @@ a:hover {
 .rightSide{
   width:39%;
   float: right;
+  visibility: hidden;
 }
 
 .leftSide{
+  margin: 0px 0px 0px 20px;
   width:59%;
   float: left;
 }
