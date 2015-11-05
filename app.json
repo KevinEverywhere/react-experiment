@@ -1,0 +1,8 @@
+{
+  "name": "Code Sample for Earnest",
+  "description": "Code sample prepared by Kevin Ready for Earnest. Adapted from react-tutorial (https://github.com/reactjs/react-tutorial).",
+  "env" : {
+    "BUILDPACK_URL": "https://github.com/heroku/heroku-buildpack-nodejs.git"
+  }
+}
+

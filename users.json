@@ -1,0 +1,22 @@
+[
+	{ 
+		"name": "Alice", 
+		"roles":["admin","user","custom"] 
+	},
+	{ 
+		"name": "Barack", 
+		"roles":["user","custom"] 
+	},
+	{ 
+		"name": "Chan", 
+		"roles":["user"] 
+	},
+	{ 
+		"name": "Daiwoo", 
+		"roles":["superuser", "admin","user","custom"] 
+	},
+	{ 
+		"name": "Eduardo", 
+		"roles":["user","custom"] 
+	}
+]
