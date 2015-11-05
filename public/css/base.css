@@ -38,16 +38,16 @@ a:hover {
 }
 
 .childBox{
+  background-color: #ffc;
   display:inline-block;
   border: 1px solid #bbb;
   width:24.5%;
 }
 
 .rolesBox{
-  background-color: #ffc;
   line-height: 2;
   margin: 0;
-  padding-top: 40px;
+  padding-top: 10px;
 }
 
 .rightSide{
@@ -58,7 +58,7 @@ a:hover {
 
 .leftSide{
   margin: 0px 0px 0px 20px;
-  width:59%;
+  width: 480px;
   float: left;
 }
 
@@ -70,15 +70,15 @@ button{
   margin:5px;
 }
 
-h3{
-  display: inline;
-  margin: 3px 0px 10px 5px;
+.h3{
+  margin: 5px 0px 10px 5px;
 }
 
 .userBox{
   position: relative;
-  height:70px;
   vertical-align: bottom;
+  border: 1px solid #ddd;
+  padding: 3px;
 }
 
 .userBox h3{

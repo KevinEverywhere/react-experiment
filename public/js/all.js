@@ -31,9 +31,9 @@ var User = React.createClass({
       );
     });
     return ( <div className = "userBox">
-      <h3> {
+      <span className="h3"> {
         this.props.name
-      } </h3>
+      } </span>
       <AddRole userManager={this.props.userManager} user={me} />
 
       <div className="rolesBox">
