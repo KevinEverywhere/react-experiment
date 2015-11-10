@@ -15,6 +15,37 @@ Array.prototype.unique = function() {
     return arr; 
 }
 
+var MakeChangeModal=React.createClass({
+  handleUserRoleSubmission:function(){
+  },
+  getInitialState:function(){
+    return {
+        changed:false
+    }
+  },
+  render:function(){
+    return (
+      <div id="makeChangeModal" className="modal fade" role="dialog">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <button type="button" className="close" data-dismiss="modal">&times;</button>
+              <h4 className="modal-title">Make Changes</h4>
+            </div>
+            <div className="modal-body">
+              <p>At this time, only the local version is enabled.</p>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className = "btn btn-default" data-dismiss="modal" >OK< /button>
+              <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+});
+
 var AddUserModal=React.createClass({
   render:function(){
     return (
@@ -41,28 +72,14 @@ var AddUserModal=React.createClass({
 });
 
 var AddRoleModal=React.createClass({
-  getInitialState: function() {
-    return {
-      currentUser:null
-    };
-  },
-  updateForUser:function(whichUser){
-  },
   addRolesToUser:function(){
-  //  this.setState({currentUser:this.refs.rolesAdder.props.curUser});
-  console.log(this.refs.rolesAdder.props.user);
-  console.log(this.refs.rolesAdder.props.curUser);
-    console.log("USER.prop=" + this.refs.rolesAdder.state[this.refs.rolesAdder.props.user]);
-  //   console.log(this.refs.rolesAdder.props.curUser.prop.roles);
-  //  
-  //  
-   this.props.userManager.state.currentUser.addRoles(this.refs.rolesAdder.state[this.refs.rolesAdder.props.user]);
-   // this.refs.rolesAdder.setState({refresh:!this.refs.rolesAdder.state.refresh});
+    this.props.userManager.state.currentUser.addRoles(
+      this.refs.rolesAdder.state[this.refs.rolesAdder.props.user]
+    );
    $('#addRoleModal').modal('toggle');
   },
   render:function(){
     if(this.props.userManager.state.currentUser!=null){
-      var theRef=this.props.userManager.state.currentUser;
       var theUser=this.props.userManager.state.currentUser.props.name;
     }else{
       var theUser="no user defined";
@@ -77,7 +94,7 @@ var AddRoleModal=React.createClass({
             </div>
             <div className="modal-body">
               <p>Please select the new roles for {theUser}.</p>
-              <AddRoles ref="rolesAdder" userManager={this.props.userManager} user={theUser} curUser={theRef} />
+              <AddRoles ref="rolesAdder" userManager={this.props.userManager} user={theUser} />
             </div>
             <div className="modal-footer">
               <button type="button"  onClick={this.addRolesToUser} className = "btn btn-default" >Add Roles< /button>
@@ -92,40 +109,29 @@ var AddRoleModal=React.createClass({
 });
 
 var AddRoles=React.createClass({
-  getInitialState: function() {
+  getInitialState:function(){
     return {};
   },
   addNewRole:function(which){
     if(this.state[this.props.user]){
-      console.log("has state");
-    //    this.state.newroles
       if($.inArray(which, this.state[this.props.user])==-1){
         var newerroles=this.state[this.props.user];
         newerroles.push(which);
         this.setState({
           [this.props.user]:newerroles
         });
-        console.log(which + " has been added to roles.")
       }
     }else{
-      console.log(this.props.user);
       var arr=[which];
-      console.log(arr.length + ";array=" + arr);
       this.setState({[this.props.user]:arr});
     }
   },
   removeNewRole:function(which){
-    console.log("removeNewRole");
-    console.log(which);
-    console.log(this.state.newroles);
-    console.log($.inArray(which, this.state.newroles));
-    console.log("removeNewRoleEND");
-      if($.inArray(which, this.state.newroles)!=-1){
-        var newerroles=this.state.newroles.splice($.inArray(which, this.state.newroles),-1);
+      if($.inArray(which, this.state[this.props.user])!=-1){
+        var newerroles=this.state[this.props.user].splice($.inArray(which, this.state[this.props.user]),-1);
         this.setState({
-          newroles:newerroles
+          [this.props.user]:newerroles
         })
-      console.log(which + " has been removed from roles.")
       }
   },
   render: function() {
@@ -134,8 +140,7 @@ var AddRoles=React.createClass({
      try{
       var _roles=this.props.userManager.state.roles;
       var currentUser=this.props.userManager.state.currentUser;
-      var _currentroles=currentUser.state.newroles.length>0 ? 
-        currentUser.state.newroles : currentUser.props.roles;
+      var _currentroles=currentUser.state.newroles.length>0 ? currentUser.state.newroles : currentUser.props.roles;
       var me=this;
       formNodes=_roles.map(function(value, index) {
         if($.inArray(value.name, _currentroles)==-1){
@@ -144,11 +149,9 @@ var AddRoles=React.createClass({
       });
       formNodes = formNodes.filter(function(n){return n !== undefined}); 
      }catch(oops){
-      console.log(oops);
      }
    }
-    console.log(this.state[this.props.user]);
-    return <div className="rolesHolder">{formNodes}</div>
+   return <div className="rolesHolder">{formNodes}</div>;
   }
 });
 
@@ -186,22 +189,18 @@ var SelectAddRole=React.createClass({
     };
   },
   getCurrentActive:function(){
-    return this.state[this.props.user]
+    return this.state[this.props.user];
   },
   addNewRole:function(){
       this.setState({[this.props.user]:true});
-    // var _active=!this.state.selectActiveArray[this.props.user].selectActive;
      this.props.roleBroker.addNewRole(this.props.rolename);
-    // this.setState({selectActive:_active})
   },
   removeNewRole:function(){
     this.setState({[this.props.user]:false});
-   // var _active=!this.state.selectActive;
-   // this.props.roleBroker.removeNewRole(this.props.rolename);
-   // this.setState({selectActive:_active})
   },
   render: function() {
-    if(this.state && this.state[this.props.user]==true){
+    if(this.props.roleBroker.state[this.props.user.props.name] && 
+      this.props.roleBroker.state[this.props.user.props.name].contains(this.props.rolename)){
      return <button type="button" className="btn btn-info btn isSelected" onClick={this.removeNewRole}>{this.props.rolename}</button>
     }else{
       return <button type="button" className="btn btn-info btn isNotSelected" onClick={this.addNewRole}>{this.props.rolename}</button>
@@ -211,7 +210,7 @@ var SelectAddRole=React.createClass({
 
 var CommitChange=React.createClass({
   render: function() {
-    return <button type="button" className="btn btn-info btn-lg" data-toggle="modal" onClick={this.props.userManager.handleUserRoleSubmission}>Make Changes</button>
+    return <button type="button" className="btn btn-info btn-lg" data-toggle="modal" data-target="#makeChangeModal">Make Changes</button>
   }  
 });
 
@@ -304,21 +303,17 @@ var User = React.createClass({
     }else{
       alert("You must have at least one role per user.");
     }
-    console.log(temproles);
   },
   addRoles: function(rolesArray) {
-    console.log(rolesArray);
-    var duplicates=this.props.roles.concat(rolesArray);
-    var unique = duplicates.unique();
-    this.setState({newroles:unique});
-    // redraw();
-    console.log(unique);
+    if(rolesArray){
+      var duplicates=this.props.roles.concat(rolesArray);
+      var unique = duplicates.unique();
+      this.setState({newroles:unique});
+    }
   },
   render: function() {
-    console.log("a");
     var me=this;
     var _roles=this.state.newroles.length>0 ? this.state.newroles : this.props.roles;
-    console.log("b");
     var roles =  _roles.map(function(value, index) {
       return (
         <div className="childBox" key={index}>
@@ -327,7 +322,6 @@ var User = React.createClass({
         </div>
       );
     });
-    console.log("c");
     return ( <div className = "userBox">
       <span className="h3"> {
         this.props.name
@@ -347,8 +341,6 @@ var UserRoleForm = React.createClass({
   },
   addUser:function(){
     if($("#newName").val().length>0){
-      console.log(this.refs.Users.state.users);
-      console.log("and then");
       var newUsers, oldUsers=this.refs.Users.state.users;
       oldUsers.push({
         name:$("#newName").val(),
@@ -357,22 +349,17 @@ var UserRoleForm = React.createClass({
       newUsers=oldUsers.sort(function(name1, name2) {
         return name1.name - name2.name;
       });
-      console.log(newUsers);
       this.refs.Users.setState({users:newUsers});
-      console.log(this.refs.Users.state.users);
       $('#addUserModal').modal('toggle');
       alert("The user has been created for this session. \n\nPlease press the Make Changes button to write to make it permanent. Press Cancel Changes if you have made a mistake.");
     }else{
       alert("Please enter a name.");
     }
-    // if($("#newName")) $("#newName").val()
-    console.log($("#newName").val());
   },
   addRoles:function(){
     console.log("add roles");
   },
   loadRoles: function() {
-    console.log("loadRoles called");
     $.ajax({
       url: this.props.rolesUrl,
       dataType: 'json',
@@ -387,7 +374,6 @@ var UserRoleForm = React.createClass({
     });
   },
   loadUsers: function() {
-    console.log("load Users called");
     $.ajax({
       url: this.props.usersUrl,
       dataType: 'json',
@@ -402,24 +388,13 @@ var UserRoleForm = React.createClass({
   },
   resetForm: function(e) {
     e.preventDefault();
-    location.reload();
+    if(confirm("The page will reload.")){
+      location.reload();
+    }
   },
   handleUserRoleSubmission: function(e) {
     e.preventDefault();
     console.log(this.props);
-    // this.setState({users: temproles});
-    // $.ajax({
-    //   url: this.props.url,
-    //   dataType: 'json',
-    //   type: 'POST',
-    //   data: temproles,
-    //   success: function(data) {
-    //     this.setState({roles: data});
-    //   }.bind(this),
-    //   error: function(xhr, status, err) {
-    //     console.error(this.props.url, status, err.toString());
-    //   }.bind(this)
-    // });
   },
   componentWillMount: function() {
     this.loadUsers();
@@ -441,13 +416,12 @@ var UserRoleForm = React.createClass({
         </form>
         <AddUserModal userManager={this} />
         <AddRoleModal userManager={this} />
+        <MakeChangeModal userManager={this} />
       </div>
     );
   }
 });
 
-// <a id="addUser" onClick={this.props.userManager.addUser} className = "addUser" >Add User< /a>
-// 
 function redraw(){
   ReactDOM.render( < UserRoleForm usersUrl = "/api/users"
     rolesUrl = "/api/roles" / > ,
