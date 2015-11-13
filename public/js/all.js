@@ -360,8 +360,12 @@ var UserRoleForm = React.createClass({
     console.log("add roles");
   },
   loadRoles: function() {
+    var _url=this.props.rolesUrl;
+    if(location.host.indexOf("fiddle")!=-1){
+      _url="https://raw.githubusercontent.com/KevinEverywhere/react-experiment/master/roles.json";
+    }
     $.ajax({
-      url: this.props.rolesUrl,
+      url: _url,
       dataType: 'json',
       cache: false,
       success: function(data) {
@@ -374,8 +378,12 @@ var UserRoleForm = React.createClass({
     });
   },
   loadUsers: function() {
+    var _url=this.props.usersUrl;
+    if(location.host.indexOf("fiddle")!=-1){
+      _url="https://raw.githubusercontent.com/KevinEverywhere/react-experiment/master/users.json";
+    }
     $.ajax({
-      url: this.props.usersUrl,
+      url: _url,
       dataType: 'json',
       cache: false,
       success: function(data) {
@@ -403,7 +411,9 @@ var UserRoleForm = React.createClass({
   render: function() {
     return ( 
       < div className = "userRoleBox" >
-        < h1 > User Roles < /h1>
+        <h1>React Components With Staged Add and Delete</h1>
+        <p>A demonstration of communication between React Components and external data sources. This can be seen at <a href="http://jsfiddle.net/KevinReady/2jddLxr4/6/">JSFiddle</a></p>
+        < h2 > User Roles < /h2>
         < form className = "userRoleForm">
           <AddUser userManager={this} />
           <CommitChange userManager={this} />
