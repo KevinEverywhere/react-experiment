@@ -1,3 +1,4 @@
+(function($){
 Array.prototype.contains = function(v) {
     for(var i = 0; i < this.length; i++) {
         if(this[i] === v) return true;
@@ -127,8 +128,9 @@ var AddRoles=React.createClass({
     }
   },
   removeNewRole:function(which){
-      if($.inArray(which, this.state[this.props.user])!=-1){
-        var newerroles=this.state[this.props.user].splice($.inArray(which, this.state[this.props.user]),-1);
+      if(this.state[this.props.user].indexOf(which)!=-1){
+        var newerroles=this.state[this.props.user];
+        newerroles.splice(this.state[this.props.user].indexOf(which),1);
         this.setState({
           [this.props.user]:newerroles
         })
@@ -196,11 +198,14 @@ var SelectAddRole=React.createClass({
      this.props.roleBroker.addNewRole(this.props.rolename);
   },
   removeNewRole:function(){
-    this.setState({[this.props.user]:false});
+    this.props.roleBroker.removeNewRole(this.props.rolename);
+    if(this.props.roleBroker.state[this.props.user.props.name].length==0){
+      this.setState({[this.props.user]:false});
+    }
   },
   render: function() {
     if(this.props.roleBroker.state[this.props.user.props.name] && 
-      this.props.roleBroker.state[this.props.user.props.name].contains(this.props.rolename)){
+      this.props.roleBroker.state[this.props.user.props.name].indexOf(this.props.rolename)!=-1){
      return <button type="button" className="btn btn-info btn isSelected" onClick={this.removeNewRole}>{this.props.rolename}</button>
     }else{
       return <button type="button" className="btn btn-info btn isNotSelected" onClick={this.addNewRole}>{this.props.rolename}</button>
@@ -311,6 +316,9 @@ var User = React.createClass({
       this.setState({newroles:unique});
     }
   },
+  removeMe: function() {
+    this.props.userManager.removeUser(this.props.name);
+  },
   render: function() {
     var me=this;
     var _roles=this.state.newroles.length>0 ? this.state.newroles : this.props.roles;
@@ -323,9 +331,9 @@ var User = React.createClass({
       );
     });
     return ( <div className = "userBox">
-      <span className="h3"> {
-        this.props.name
-      } </span>
+      <span className="h3"> 
+        {this.props.name}  <a id={"remove" + this.props.name} onClick={me.removeMe} className = "deleteUser" >&times;< /a>
+       </span>
       <AddRole userManager={me.props.userManager} user={me} />
       <div className="rolesBox">
       {roles}
@@ -338,6 +346,22 @@ var User = React.createClass({
 var UserRoleForm = React.createClass({
   getInitialState:function(){
     return {currentUser: null,roles:[]}
+  },
+  removeUser:function(which){
+    console.log("removing " + which);
+      var newerusers=this.refs.Users.state.users, toRemove=-1;
+      for (var i = 0; i < newerusers.length; i++) {
+          if (newerusers[i].name === which) {
+            toRemove=i;
+              break;
+          }
+      }
+    if(confirm("The user "+which+" is about to be removed from the session.")){
+      newerusers.splice(i,1);
+      this.refs.Users.setState({
+        "users":newerusers
+      });
+    }
   },
   addUser:function(){
     if($("#newName").val().length>0){
@@ -356,11 +380,8 @@ var UserRoleForm = React.createClass({
       alert("Please enter a name.");
     }
   },
-  addRoles:function(){
-    console.log("add roles");
-  },
   loadRoles: function() {
-    var _url=this.props.rolesUrl;
+    var _url=this.props.rolesUrl,me=this;
     if(location.host.indexOf("fiddle")!=-1){
       _url="https://raw.githubusercontent.com/KevinEverywhere/react-experiment/master/roles.json";
     }
@@ -369,16 +390,16 @@ var UserRoleForm = React.createClass({
       dataType: 'json',
       cache: false,
       success: function(data) {
-        this.refs.Roles.loadRoles(data);
-        this.setState({roles:data});
-      }.bind(this),
+        me.refs.Roles.loadRoles(data);
+        me.setState({roles:data});
+      }.bind(me),
       error: function(xhr, status, err) {
-        console.error(this.props.rolesUrl, status, err.toString());
-      }.bind(this)
+        console.error(me.props.rolesUrl, status, err.toString());
+      }.bind(me)
     });
   },
   loadUsers: function() {
-    var _url=this.props.usersUrl;
+    var _url=this.props.usersUrl,me=this;
     if(location.host.indexOf("fiddle")!=-1){
       _url="https://raw.githubusercontent.com/KevinEverywhere/react-experiment/master/users.json";
     }
@@ -387,11 +408,11 @@ var UserRoleForm = React.createClass({
       dataType: 'json',
       cache: false,
       success: function(data) {
-        this.refs.Users.loadUsers(data, this);
-      }.bind(this),
+        me.refs.Users.loadUsers(data, me);
+      }.bind(me),
       error: function(xhr, status, err) {
-        console.error(this.props.usersUrl, status, err.toString());
-      }.bind(this)
+        console.error(me.props.usersUrl, status, err.toString());
+      }.bind(me)
     });
   },
   resetForm: function(e) {
@@ -404,17 +425,20 @@ var UserRoleForm = React.createClass({
     e.preventDefault();
     console.log(this.props);
   },
-  componentWillMount: function() {
+  componentDidMount: function() {
     this.loadUsers();
     this.loadRoles();
   },
   render: function() {
     return ( 
-      < div className = "userRoleBox" >
+      <div className = "userRoleBox" >
         <h1>React Components With Staged Add and Delete</h1>
-        <p>A demonstration of communication between React Components and external data sources. This can be seen at <a href="http://jsfiddle.net/KevinReady/2jddLxr4/6/">JSFiddle</a></p>
-        < h2 > User Roles < /h2>
-        < form className = "userRoleForm">
+        <p>
+          A demonstration of communication between React Components and external data sources. 
+          See a functioning example at <a href='http://jsfiddle.net/KevinReady/2jddLxr4' target="_blank">jsfiddle</a>.
+        </p>
+        <h2> User Roles </h2>
+        <form className = "userRoleForm">
           <AddUser userManager={this} />
           <CommitChange userManager={this} />
           <RevertChange userManager={this} />
@@ -433,10 +457,10 @@ var UserRoleForm = React.createClass({
 });
 
 function redraw(){
-  ReactDOM.render( < UserRoleForm usersUrl = "/api/users"
-    rolesUrl = "/api/roles" / > ,
+  ReactDOM.render( <UserRoleForm usersUrl = "/api/users" rolesUrl = "/api/roles" />,
     document.getElementById('content')
   );
 }
 
 redraw();
+})($)

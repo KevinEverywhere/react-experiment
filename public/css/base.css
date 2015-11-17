@@ -32,6 +32,11 @@ a:hover {
   float: right;
 }
 
+.deleteUser{
+  cursor: pointer;
+  margin:10px;
+}
+
 .cbRole, .role{
   margin:14px 0px 5px 5px;
   text-transform: uppercase;
