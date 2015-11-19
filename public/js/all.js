@@ -259,9 +259,9 @@ var Roles = React.createClass({
           <Role access={role.access} name={role.name} key={index}></Role>
         );
       });          
-      return <div className="rightSide"><h2>Roles</h2>{roles}</div>
+      return <div className="hiddenSide"><h2>Roles</h2>{roles}</div>
     }else{
-      return <div className="rightSide"><h2>Roles</h2><span>loading roles...</span></div>;
+      return <div className="hiddenSide"><h2>Roles</h2><span>loading roles...</span></div>;
     }
   }
 });
@@ -313,6 +313,7 @@ var User = React.createClass({
     if(rolesArray){
       var duplicates=this.props.roles.concat(rolesArray);
       var unique = duplicates.unique();
+      this.props.userManager.addStatus("The user "+this.props.name+" has new roles.");
       this.setState({newroles:unique});
     }
   },
@@ -373,6 +374,7 @@ var UserRoleForm = React.createClass({
       newUsers=oldUsers.sort(function(name1, name2) {
         return name1.name - name2.name;
       });
+      this.addStatus("The user "+$("#newName").val()+" has been created.");
       this.refs.Users.setState({users:newUsers});
       $('#addUserModal').modal('toggle');
       alert("The user has been created for this session. \n\nPlease press the Make Changes button to write to make it permanent. Press Cancel Changes if you have made a mistake.");
@@ -397,6 +399,9 @@ var UserRoleForm = React.createClass({
         console.error(me.props.rolesUrl, status, err.toString());
       }.bind(me)
     });
+    
+    /*
+     */
   },
   loadUsers: function() {
     var _url=this.props.usersUrl,me=this;
@@ -429,6 +434,9 @@ var UserRoleForm = React.createClass({
     this.loadUsers();
     this.loadRoles();
   },
+  addStatus: function(what) {
+    this.refs.statusBox.addStatus(what);
+  },
   render: function() {
     return ( 
       <div className = "userRoleBox" >
@@ -445,14 +453,28 @@ var UserRoleForm = React.createClass({
           <hr/>
           <div className="bothSides">
             <Users userManager={this} ref = "Users" /> 
-            <Roles userManager={this} ref = "Roles" /> 
+            <StatusBox userManager={this} ref = "statusBox" /> 
           </div>
         </form>
         <AddUserModal userManager={this} />
         <AddRoleModal userManager={this} />
         <MakeChangeModal userManager={this} />
+        <Roles userManager={this} ref = "Roles" /> 
       </div>
     );
+  }
+});
+
+var StatusBox=React.createClass({
+  getInitialState:function(){
+    return {statusText: ""}
+  },
+  addStatus: function(what) {
+    var newStatus=this.state.statusText + "<p>" + what + "</p>";
+    this.setState({statusText:newStatus});
+  },
+  render: function() {
+    return <div className="statusBox rightSide" dangerouslySetInnerHTML={{__html:this.state.statusText}}></div>;
   }
 });
 

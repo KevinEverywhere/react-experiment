@@ -56,10 +56,13 @@ a:hover {
   padding-top: 10px;
 }
 
+.hiddenSide{
+  visibility: hidden;  
+}
+
 .rightSide{
-  width:39%;
+  width:320px;
   float: right;
-  visibility: hidden;
 }
 
 .leftSide{
@@ -69,6 +72,7 @@ a:hover {
 
 .bothSides{
   width:100%;
+  position: relative;
 }
 
 button{
@@ -111,5 +115,10 @@ button{
   background-color: rgba(225, 135, 135, .8) !important;
 }
 
+.statusBox{
+  width:320px;
+  height:300px;
+  background-color: #ccc;
+}
 
 

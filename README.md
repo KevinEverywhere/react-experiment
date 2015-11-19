@@ -1,2 +1,4 @@
 # react-experiment
-This is an example of inter-component communication of a React SPA that demonstrates reading and writing JSON on an express server.
+A demonstration of communication between React Components and external data sources. See a functioning example at [jsfiddle][jsfiddle].
+
+[jsfiddle]: http://jsfiddle.net/KevinReady/2jddLxr4
