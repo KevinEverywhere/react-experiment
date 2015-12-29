@@ -17,13 +17,6 @@ Array.prototype.unique = function() {
 }
 
 var MakeChangeModal=React.createClass({
-  handleUserRoleSubmission:function(){
-  },
-  getInitialState:function(){
-    return {
-        changed:false
-    }
-  },
   render:function(){
     return (
       <div id="makeChangeModal" className="modal fade" role="dialog">
@@ -110,9 +103,6 @@ var AddRoleModal=React.createClass({
 });
 
 var AddRoles=React.createClass({
-  getInitialState:function(){
-    return {};
-  },
   addNewRole:function(which){
     if(this.state[this.props.user]){
       if($.inArray(which, this.state[this.props.user])==-1){
@@ -185,17 +175,12 @@ var AddRole=React.createClass({
 });
 
 var SelectAddRole=React.createClass({
-  getInitialState: function() {
-    return {
-      refresh:true
-    };
-  },
   getCurrentActive:function(){
     return this.state[this.props.user];
   },
   addNewRole:function(){
-      this.setState({[this.props.user]:true});
-     this.props.roleBroker.addNewRole(this.props.rolename);
+    this.setState({[this.props.user]:true});
+    this.props.roleBroker.addNewRole(this.props.rolename);
   },
   removeNewRole:function(){
     this.props.roleBroker.removeNewRole(this.props.rolename);
@@ -399,9 +384,6 @@ var UserRoleForm = React.createClass({
         console.error(me.props.rolesUrl, status, err.toString());
       }.bind(me)
     });
-    
-    /*
-     */
   },
   loadUsers: function() {
     var _url=this.props.usersUrl,me=this;
